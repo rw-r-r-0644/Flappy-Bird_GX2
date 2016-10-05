@@ -16,3 +16,4 @@ In order to build this application, you need the custom liboGC and portlibs modi
 <b>Maschell</b> - GX2_Example and coding help  
 <b>vgmoose</b> - Coding help  
 <b>pwsincd</b> - Icon  
+<b>QuarkTheAwesome, dylon99</b> - Various help and testing
