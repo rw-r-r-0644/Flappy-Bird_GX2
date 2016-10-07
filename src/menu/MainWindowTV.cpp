@@ -170,7 +170,7 @@ void MainWindowTV::process(){
             flappy_bird_position -= flappy_bird_velocity;
 
             if(flappy_bird_position<-224) flappy_bird_position=-224;
-            if(flappy_bird_position>328) flappy_bird_position=328;
+            if(flappy_bird_position>320) flappy_bird_position=320;
 
             flappy_bird->setPosition(-150, (int)flappy_bird_position);
             if ((((float)flappy_bird_velocity / 10.0f) * 90.0f)<90.0f) flappy_bird_rotation = (((float)flappy_bird_velocity / 10.0f) * 90.0f);
@@ -203,7 +203,7 @@ void MainWindowTV::process(){
             flappy_bird_position -= flappy_bird_velocity;
 
             if(flappy_bird_position<-224) flappy_bird_position=-224;
-            if(flappy_bird_position>328) flappy_bird_position=328;
+            if(flappy_bird_position>320) flappy_bird_position=320;
 
             flappy_bird->setPosition(-150, (int)flappy_bird_position);
             if ((((float)flappy_bird_velocity / 10.0f) * 90.0f)<90.0f) flappy_bird_rotation = (((float)flappy_bird_velocity / 10.0f) * 90.0f);
