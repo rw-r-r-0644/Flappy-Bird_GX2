@@ -104,8 +104,8 @@ public:
     }
 
     void setTextureAndSampler(const GX2Texture *texture, const GX2Sampler *sampler) const {
-        GX2SetPixelTexture(texture, samplerLocation);
-        GX2SetPixelSampler(sampler, samplerLocation);
+        GX2SetPixelTexture((GX2Texture*)texture, samplerLocation);
+        GX2SetPixelSampler((GX2Sampler*)sampler, samplerLocation);
     }
 };
 

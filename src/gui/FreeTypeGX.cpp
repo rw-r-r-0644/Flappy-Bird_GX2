@@ -20,10 +20,9 @@
  * along with FreeTypeGX.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FreeTypeGX.h"
 #include "video/CVideo.h"
 #include "video/shaders/Texture2DShader.h"
-#include "utils/logger.h"
+#include "FreeTypeGX.h"
 
 using namespace std;
 
@@ -36,7 +35,7 @@ FreeTypeGX::FreeTypeGX(const uint8_t* fontBuffer, FT_Long bufferSize, bool lastF
 {
 	int faceIndex = 0;
 	ftPointSize = 0;
-    GX2InitSampler(&ftSampler, GX2_TEX_CLAMP_CLAMP_BORDER, GX2_TEX_XY_FILTER_BILINEAR);
+    GX2InitSampler(&ftSampler, GX2_TEX_CLAMP_MODE_CLAMP_BORDER, GX2_TEX_XY_FILTER_MODE_LINEAR);
 
 	FT_Init_FreeType(&ftLibrary);
 	if(lastFace)
@@ -163,8 +162,8 @@ void FreeTypeGX::unloadFont()
         {
             if(itr2->second.texture)
             {
-                if(itr2->second.texture->surface.image_data)
-                    free(itr2->second.texture->surface.image_data);
+                if(itr2->second.texture->surface.image)
+                    free(itr2->second.texture->surface.image);
 
                 delete itr2->second.texture;
                 itr2->second.texture = NULL;
@@ -235,7 +234,7 @@ ftgxCharData * FreeTypeGX::cacheGlyphData(wchar_t charCode, int16_t pixelSize)
 
             //! Initialize texture
             charData->texture = new GX2Texture;
-            GX2InitTexture(charData->texture, textureWidth,  textureHeight, 1, 0, GX2_SURFACE_FORMAT_TC_R5_G5_B5_A1_UNORM, GX2_SURFACE_DIM_2D, GX2_TILE_MODE_LINEAR_ALIGNED);
+            GX2InitTexture(charData->texture, textureWidth,  textureHeight, 1, 0, GX2_SURFACE_FORMAT_UNORM_R5_G5_B5_A1, GX2_SURFACE_DIM_TEXTURE_2D, GX2_TILE_MODE_LINEAR_ALIGNED);
 
 			loadGlyphData(glyphBitmap, charData);
 
@@ -277,14 +276,14 @@ uint16_t FreeTypeGX::cacheGlyphDataComplete(int16_t pixelSize)
 
 void FreeTypeGX::loadGlyphData(FT_Bitmap *bmp, ftgxCharData *charData)
 {
-	charData->texture->surface.image_data = (uint8_t *) memalign(charData->texture->surface.align, charData->texture->surface.image_size);
-	if(!charData->texture->surface.image_data)
+	charData->texture->surface.image = (uint8_t *) memalign(charData->texture->surface.alignment, charData->texture->surface.imageSize);
+	if(!charData->texture->surface.image)
         return;
 
-	memset(charData->texture->surface.image_data, 0x00, charData->texture->surface.image_size);
+	memset(charData->texture->surface.image, 0x00, charData->texture->surface.imageSize);
 
 	uint8_t *src = (uint8_t *)bmp->buffer;
-	uint16_t *dst = (uint16_t *)charData->texture->surface.image_data;
+	uint16_t *dst = (uint16_t *)charData->texture->surface.image;
 	int32_t x, y;
 
 	for(y = 0; y < bmp->rows; y++)
@@ -295,7 +294,7 @@ void FreeTypeGX::loadGlyphData(FT_Bitmap *bmp, ftgxCharData *charData)
             dst[y * charData->texture->surface.pitch + x] = intensity ? ((intensity << 11) | (intensity << 6) | (intensity << 1) | 1) : 0;
 		}
 	}
-    GX2Invalidate(GX2_INVALIDATE_CPU_TEXTURE, charData->texture->surface.image_data, charData->texture->surface.image_size);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_TEXTURE, charData->texture->surface.image, charData->texture->surface.imageSize);
 }
 
 /**
@@ -390,6 +389,7 @@ uint16_t FreeTypeGX::drawText(CVideo *video, int16_t x, int16_t y, int16_t z, co
 	}
 
 	int i = 0;
+
 	while (text[i])
 	{
 		ftgxCharData* glyphData = cacheGlyphData(text[i], pixelSize);

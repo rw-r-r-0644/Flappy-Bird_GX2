@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string>
 #include <string.h>
-#include <fcntl.h>
-#include <gctypes.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include "common/types.h"
 
 class CFile
 {

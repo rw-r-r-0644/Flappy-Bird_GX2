@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include "dynamic_libs/os_functions.h"
-#include "utils/logger.h"
+#include "common/types.h"
 #include "exception_handler.h"
 
 #define OS_EXCEPTION_MODE_GLOBAL_ALL_CORES      4
@@ -35,6 +34,9 @@ typedef struct OSContext
 
   /* There is actually a lot more here but we don't need the rest*/
 } OSContext;
+
+#include <coreinit/exception.h>
+#include <coreinit/debug.h>
 
 #define CPU_STACK_TRACE_DEPTH		10
 #define __stringify(rn)				#rn
@@ -78,11 +80,9 @@ static const char exception_print_formats[18][45] = {
       "%p:  %08X %08X %08X %08X\n",                         // 17
 };
 
-static unsigned char exception_cb(void * c, unsigned char exception_type) {
+static unsigned char exception_cb(OSContext * context, unsigned char exception_type) {
     char buf[850];
     int pos = 0;
-
-    OSContext *context = (OSContext *) c;
     /*
      * This part is mostly from libogc. Thanks to the devs over there.
      */
@@ -147,7 +147,7 @@ static unsigned char exception_cb(void * c, unsigned char exception_type) {
 		for (i = 0; i < 8; i += 4)
             pos += sprintf(buf + pos, exception_print_formats[17], &(pAdd[i]),pAdd[i], pAdd[i+1], pAdd[i+2], pAdd[i+3]);
 	//}
-    log_print(buf);
+
     OSFatal(buf);
     return 1;
 }
@@ -163,7 +163,7 @@ static unsigned char program_exception_cb(void * context) {
 }
 
 void setup_os_exceptions(void) {
-    OSSetExceptionCallback(OS_EXCEPTION_DSI, &dsi_exception_cb);
-    OSSetExceptionCallback(OS_EXCEPTION_ISI, &isi_exception_cb);
-    OSSetExceptionCallback(OS_EXCEPTION_PROGRAM, &program_exception_cb);
+    OSSetExceptionCallback(OS_EXCEPTION_DSI, (OSExceptionCallbackFn)dsi_exception_cb);
+    OSSetExceptionCallback(OS_EXCEPTION_ISI, (OSExceptionCallbackFn)isi_exception_cb);
+    OSSetExceptionCallback(OS_EXCEPTION_PROGRAM, (OSExceptionCallbackFn)program_exception_cb);
 }

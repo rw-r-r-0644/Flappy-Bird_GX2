@@ -116,7 +116,7 @@ ColorShader::ColorShader()
     pixelShader.setProgram(cpPixelShaderProgram, sizeof(cpPixelShaderProgram), cpPixelShaderRegs, sizeof(cpPixelShaderRegs));
 
     colorIntensityLocation = 0;
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_VAR_TYPE_VEC4, 1, colorIntensityLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_SHADER_VAR_TYPE_FLOAT4, 1, colorIntensityLocation, -1 });
 
     //! create vertex shader
     vertexShader.setProgram(cpVertexShaderProgram, sizeof(cpVertexShaderProgram), cpVertexShaderRegs, sizeof(cpVertexShaderRegs));
@@ -124,18 +124,18 @@ ColorShader::ColorShader()
     angleLocation = 0;
     offsetLocation = 4;
     scaleLocation = 8;
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_angle", GX2_VAR_TYPE_FLOAT, 1, angleLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_offset", GX2_VAR_TYPE_VEC3, 1, offsetLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_scale", GX2_VAR_TYPE_VEC3, 1, scaleLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_angle", GX2_SHADER_VAR_TYPE_FLOAT, 1, angleLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_offset", GX2_SHADER_VAR_TYPE_FLOAT3, 1, offsetLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_scale", GX2_SHADER_VAR_TYPE_FLOAT3, 1, scaleLocation, -1 });
 
     colorLocation = 1;
     positionLocation = 0;
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_color", GX2_VAR_TYPE_VEC4, 0, colorLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_VAR_TYPE_VEC3, 0, positionLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_color", GX2_SHADER_VAR_TYPE_FLOAT4, 0, colorLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_SHADER_VAR_TYPE_FLOAT3, 0, positionLocation });
 
     //! setup attribute streams
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_32_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), colorLocation, 1, 0, GX2_ATTRIB_FORMAT_8_8_8_8_UNORM);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), colorLocation, 1, 0, GX2_ATTRIB_FORMAT_UNORM_8_8_8_8);
 
     //! create fetch shader
     fetchShader = new FetchShader(vertexShader.getAttributeBuffer(), vertexShader.getAttributesCount());
@@ -150,7 +150,7 @@ ColorShader::ColorShader()
         positionVtxs[i++] =  1.0f; positionVtxs[i++] = -1.0f; positionVtxs[i++] = 0.0f;
         positionVtxs[i++] =  1.0f; positionVtxs[i++] =  1.0f; positionVtxs[i++] = 0.0f;
         positionVtxs[i++] = -1.0f; positionVtxs[i++] =  1.0f; positionVtxs[i++] = 0.0f;
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, positionVtxs, cuPositionVtxsSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, positionVtxs, cuPositionVtxsSize);
     }
 }
 

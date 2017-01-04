@@ -41,12 +41,12 @@ GameIcon::GameIcon(const std::string & filename, GuiImageData *preloadImage)
     if(posVtxs)
     {
         memcpy((f32*)posVtxs, cfGameIconPosVtxs, sizeof(cfGameIconPosVtxs));
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, (f32*)posVtxs, sizeof(cfGameIconPosVtxs));
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, (f32*)posVtxs, sizeof(cfGameIconPosVtxs));
     }
     if(texCoords)
     {
         memcpy((f32*)texCoords, cfGameIconTexCoords, sizeof(cfGameIconTexCoords));
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, (f32*)texCoords, sizeof(cfGameIconTexCoords));
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, (f32*)texCoords, sizeof(cfGameIconTexCoords));
     }
 
     //! create vertexes for the mirror frame
@@ -59,7 +59,7 @@ GameIcon::GameIcon(const std::string & filename, GuiImageData *preloadImage)
             texCoordsMirror[i*2 + 0] = texCoords[i*2 + 0] * cfIconMirrorScale - ((cfIconMirrorScale - 1.0f) - (cfIconMirrorScale - 1.0f) * 0.5f);
             texCoordsMirror[i*2 + 1] = texCoords[i*2 + 1] * cfIconMirrorScale - ((cfIconMirrorScale - 1.0f) - (cfIconMirrorScale - 1.0f) * 0.5f);
         }
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, texCoordsMirror, sizeof(cfGameIconTexCoords));
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, texCoordsMirror, sizeof(cfGameIconTexCoords));
     }
 
     //! setup stroke of the icon
@@ -67,7 +67,7 @@ GameIcon::GameIcon(const std::string & filename, GuiImageData *preloadImage)
     if(strokePosVtxs)
     {
         memcpy(strokePosVtxs, cfGameIconStrokeVtxs, sizeof(cfGameIconStrokeVtxs));
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, strokePosVtxs, sizeof(cfGameIconStrokeVtxs));
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, strokePosVtxs, sizeof(cfGameIconStrokeVtxs));
     }
     strokeTexCoords = (f32*)memalign(GX2_VERTEX_BUFFER_ALIGNMENT, cuGameIconStrokeVtxCount * Shader::cuTexCoordAttrSize);
     if(strokeTexCoords)
@@ -77,14 +77,14 @@ GameIcon::GameIcon(const std::string & filename, GuiImageData *preloadImage)
             strokeTexCoords[n] = (1.0f + strokePosVtxs[i]) * 0.5f;
             strokeTexCoords[n+1] = 1.0f - (1.0f + strokePosVtxs[i+1]) * 0.5f;
         }
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, strokeTexCoords, cuGameIconStrokeVtxCount * Shader::cuTexCoordAttrSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, strokeTexCoords, cuGameIconStrokeVtxCount * Shader::cuTexCoordAttrSize);
     }
     strokeColorVtxs = (u8*)memalign(GX2_VERTEX_BUFFER_ALIGNMENT, cuGameIconStrokeVtxCount * Shader::cuColorAttrSize);
     if(strokeColorVtxs)
     {
         for(size_t i = 0; i < (cuGameIconStrokeVtxCount * Shader::cuColorAttrSize); i++)
             strokeColorVtxs[i] = 0xff;
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, strokeColorVtxs, cuGameIconStrokeVtxCount * Shader::cuColorAttrSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, strokeColorVtxs, cuGameIconStrokeVtxCount * Shader::cuColorAttrSize);
     }
 }
 
@@ -236,14 +236,14 @@ void GameIcon::draw(CVideo *pVideo, const glm::mat4 & projectionMtx, const glm::
             Shader3D::instance()->setModelViewMtx(m_iconView);
             Shader3D::instance()->setColorIntensity(colorIntensity);
             Shader3D::instance()->setAttributeBuffer(vtxCount, posVtxs, texCoords);
-            Shader3D::instance()->draw(GX2_PRIMITIVE_QUADS, vtxCount);
+            Shader3D::instance()->draw(GX2_PRIMITIVE_MODE_QUADS, vtxCount);
         }
 
         if(bSelected)
         {
             strokeFractalEnable = 0;
 
-            GX2SetDepthOnlyControl(GX2_ENABLE, GX2_DISABLE, GX2_COMPARE_LEQUAL);
+            GX2SetDepthOnlyControl(GX2_ENABLE, GX2_DISABLE, GX2_COMPARE_FUNC_LEQUAL);
             m_strokeView = glm::scale(m_iconView, glm::vec3(selectionBlurOuterSize, selectionBlurOuterSize, 0.0f));
             ShaderFractalColor::instance()->setShaders();
             ShaderFractalColor::instance()->setProjectionMtx(projectionMtx);
@@ -260,7 +260,7 @@ void GameIcon::draw(CVideo *pVideo, const glm::mat4 & projectionMtx, const glm::
             ShaderFractalColor::instance()->setBlurBorder(selectionBlurInnerBorderSize);
             ShaderFractalColor::instance()->setColorIntensity(selectionBlurInnerColorIntensity);
             ShaderFractalColor::instance()->draw();
-            GX2SetDepthOnlyControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_LEQUAL);
+            GX2SetDepthOnlyControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_FUNC_LEQUAL);
         }
 
         if(iDraw == RENDER_NORMAL && bRenderStroke)
@@ -280,7 +280,7 @@ void GameIcon::draw(CVideo *pVideo, const glm::mat4 & projectionMtx, const glm::
             ShaderFractalColor::instance()->setColorIntensity(colorIntensity);
             ShaderFractalColor::instance()->setAlphaFadeOut(*alphaFadeOut);
             ShaderFractalColor::instance()->setAttributeBuffer(cuGameIconStrokeVtxCount, strokePosVtxs, strokeTexCoords, strokeColorVtxs);
-            ShaderFractalColor::instance()->draw(GX2_PRIMITIVE_LINE_STRIP, cuGameIconStrokeVtxCount);
+            ShaderFractalColor::instance()->draw(GX2_PRIMITIVE_MODE_LINE_STRIP, cuGameIconStrokeVtxCount);
 
         }
 
@@ -294,7 +294,7 @@ void GameIcon::draw(CVideo *pVideo, const glm::mat4 & projectionMtx, const glm::
         Shader3D::instance()->setModelViewMtx(m_mirrorView);
         Shader3D::instance()->setColorIntensity(colorIntensityMirror);
         Shader3D::instance()->setAttributeBuffer(vtxCount, posVtxs, texCoordsMirror);
-        Shader3D::instance()->draw(GX2_PRIMITIVE_QUADS, vtxCount);
+        Shader3D::instance()->draw(GX2_PRIMITIVE_MODE_QUADS, vtxCount);
 
         if(bIconLast)
         {
@@ -309,7 +309,7 @@ void GameIcon::draw(CVideo *pVideo, const glm::mat4 & projectionMtx, const glm::
             Shader3D::instance()->setModelViewMtx(m_iconView);
             Shader3D::instance()->setColorIntensity(colorIntensity);
             Shader3D::instance()->setAttributeBuffer(vtxCount, posVtxs, texCoords);
-            Shader3D::instance()->draw(GX2_PRIMITIVE_QUADS, vtxCount);
+            Shader3D::instance()->draw(GX2_PRIMITIVE_MODE_QUADS, vtxCount);
         }
 
         //! return back normal culling

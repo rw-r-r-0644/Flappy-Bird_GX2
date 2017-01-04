@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 #include "GuiButton.h"
-#include "GuiTrigger.h"
 #include "GuiController.h"
 
 /**
@@ -162,14 +161,12 @@ void GuiButton::draw(CVideo *v)
 		return;
 
 	// draw image
-	if((isDrawOverOnlyWhenSelected() && (isStateSet(STATE_SELECTED) && imageOver)) ||
-      (!isDrawOverOnlyWhenSelected() && (isStateSet(STATE_OVER | STATE_SELECTED | STATE_CLICKED | STATE_HELD) && imageOver)))
+	if(isStateSet(STATE_OVER | STATE_SELECTED | STATE_CLICKED | STATE_HELD) && imageOver)
 		imageOver->draw(v);
 	else if(image)
 		image->draw(v);
 
-	if((isDrawOverOnlyWhenSelected() && (isStateSet(STATE_SELECTED) && iconOver)) ||
-      (!isDrawOverOnlyWhenSelected() && (isStateSet(STATE_OVER | STATE_SELECTED | STATE_CLICKED | STATE_HELD) && iconOver)))
+	if(isStateSet(STATE_OVER | STATE_SELECTED | STATE_CLICKED | STATE_HELD) && iconOver)
 		iconOver->draw(v);
 	else if(icon)
 		icon->draw(v);
@@ -186,9 +183,9 @@ void GuiButton::draw(CVideo *v)
 
 void GuiButton::update(GuiController * c)
 {
-	if(!c || isStateSet(STATE_DISABLED|STATE_HIDDEN|STATE_DISABLE_INPUT, c->chan))
+	if(!c || isStateSet(STATE_DISABLED, c->chan) || isStateSet(STATE_HIDDEN, c->chan))
 		return;
-	else if(parentElement && (parentElement->isStateSet(STATE_DISABLED|STATE_HIDDEN|STATE_DISABLE_INPUT, c->chan)))
+	else if(parentElement && (parentElement->isStateSet(STATE_DISABLED, c->chan) || parentElement->isStateSet(STATE_HIDDEN, c->chan)))
 		return;
 
     if(selectable)
@@ -239,10 +236,9 @@ void GuiButton::update(GuiController * c)
         // button triggers
         if(clickable)
         {
+            bool isClicked = trigger[i]->clicked(c);
 
-            int isClicked = trigger[i]->clicked(c);
-
-            if(   !clickedTrigger && (isClicked != GuiTrigger::CLICKED_NONE)
+            if(   !clickedTrigger && isClicked
                && (trigger[i]->isClickEverywhere() || (isStateSet(STATE_SELECTED | STATE_OVER, c->chan) && trigger[i]->isSelectionClickEverywhere()) || this->isInside(c->data.x, c->data.y)))
             {
                 if(soundClick)
@@ -250,23 +246,16 @@ void GuiButton::update(GuiController * c)
 
                 clickedTrigger = trigger[i];
 
-                if(!isStateSet(STATE_CLICKED, c->chan)){
-                    if(isClicked == GuiTrigger::CLICKED_TOUCH){
-                        setState(STATE_CLICKED_TOUCH, c->chan);
-                    }else{
-                        setState(STATE_CLICKED, c->chan);
-                    }
-                }
+                if(!isStateSet(STATE_CLICKED, c->chan))
+                    setState(STATE_CLICKED, c->chan);
 
                 clicked(this, c, trigger[i]);
             }
-            else if((isStateSet(STATE_CLICKED, c->chan) || isStateSet(STATE_CLICKED_TOUCH, c->chan)) && (clickedTrigger == trigger[i]) && !isStateSet(STATE_HELD, c->chan) && !trigger[i]->held(c) && ((isClicked == GuiTrigger::CLICKED_NONE) || trigger[i]->released(c)))
+            else if(isStateSet(STATE_CLICKED, c->chan) && (clickedTrigger == trigger[i]) && !isStateSet(STATE_HELD, c->chan) && !trigger[i]->held(c) && (!isClicked || trigger[i]->released(c)))
             {
-                if((isStateSet(STATE_CLICKED_TOUCH, c->chan) && this->isInside(c->data.x, c->data.y)) || (isStateSet(STATE_CLICKED, c->chan))){
-                    clickedTrigger = NULL;
-                    clearState(STATE_CLICKED, c->chan);
-                    released(this, c, trigger[i]);
-                }
+                clickedTrigger = NULL;
+                clearState(STATE_CLICKED, c->chan);
+                released(this, c, trigger[i]);
             }
         }
 

@@ -51,8 +51,8 @@ GuiParticleImage::GuiParticleImage(int w, int h, u32 particleCount)
         colorVertexs[i * 4 + 2] = 0xff;
         colorVertexs[i * 4 + 3] = 0xff;
     }
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, posVertexs, ColorShader::cuVertexAttrSize * CIRCLE_VERTEX_COUNT);
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, colorVertexs, ColorShader::cuColorAttrSize * CIRCLE_VERTEX_COUNT);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, posVertexs, ColorShader::cuVertexAttrSize * CIRCLE_VERTEX_COUNT);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, colorVertexs, ColorShader::cuColorAttrSize * CIRCLE_VERTEX_COUNT);
 
     particles.resize(particleCount);
 
@@ -62,8 +62,8 @@ GuiParticleImage::GuiParticleImage(int w, int h, u32 particleCount)
         particles[i].position.y = getRandMinusOneToOneF32() * getHeight() * 0.5f;
         particles[i].position.z = 0.0f;
         particles[i].colors = glm::vec4(1.0f, 1.0f, 1.0f, (getRandZeroToOneF32() * 0.6f) + 0.05f);
-        particles[i].radius = getRandZeroToOneF32() * 30.0f + 60.0f;
-        particles[i].speed = (getRandZeroToOneF32() * 0.4f) + 0.6f;
+        particles[i].radius = getRandZeroToOneF32() * 30.0f;
+        particles[i].speed = (getRandZeroToOneF32() * 0.6f) + 0.2f;
         particles[i].direction = getRandMinusOneToOneF32();
     }
 }
@@ -97,8 +97,8 @@ void GuiParticleImage::draw(CVideo *pVideo)
             particles[i].position.x = getRandMinusOneToOneF32() * getWidth() * 0.5f;
             particles[i].position.y = -getHeight() * 0.5f - 30.0f;
             particles[i].colors = glm::vec4(1.0f, 1.0f, 1.0f, (getRandZeroToOneF32() * 0.6f) + 0.05f);
-            particles[i].radius = getRandZeroToOneF32() * 30.0f + 60.0f;
-            particles[i].speed = (getRandZeroToOneF32() * 0.4f) + 0.6f;
+            particles[i].radius = getRandZeroToOneF32() * 30.0f;
+            particles[i].speed = (getRandZeroToOneF32() * 0.6f) + 0.2f;
             particles[i].direction = getRandMinusOneToOneF32();
         }
         if(particles[i].position.x < (-getWidth() * 0.5f - 50.0f))
@@ -123,6 +123,6 @@ void GuiParticleImage::draw(CVideo *pVideo)
         ColorShader::instance()->setOffset(positionOffsets);
         ColorShader::instance()->setScale(scaleFactor);
         ColorShader::instance()->setColorIntensity(colorIntensity * particles[i].colors);
-        ColorShader::instance()->draw(GX2_PRIMITIVE_TRIANGLE_FAN, CIRCLE_VERTEX_COUNT);
+        ColorShader::instance()->draw(GX2_PRIMITIVE_MODE_TRIANGLE_FAN, CIRCLE_VERTEX_COUNT);
     }
 }

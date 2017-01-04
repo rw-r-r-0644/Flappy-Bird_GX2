@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "CFile.hpp"
 
-
 CFile::CFile()
 {
 	iFd = -1;

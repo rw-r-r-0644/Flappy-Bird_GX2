@@ -19,8 +19,17 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "dynamic_libs/gx2_functions.h"
 #include "utils/utils.h"
+
+#include <gx2/draw.h>
+#include <gx2/enum.h>
+#include <gx2/mem.h>
+#include <gx2/registers.h>
+#include <gx2/sampler.h>
+#include <gx2/shaders.h>
+#include <gx2/surface.h>
+#include <gx2/texture.h>
+#include "common/gx2_ext.h"
 
 class Shader
 {
@@ -36,34 +45,34 @@ public:
         GX2SetLineWidth(width);
     }
 
-    static void draw(s32 primitive = GX2_PRIMITIVE_QUADS, u32 vtxCount = 4)
+    static void draw(s32 primitive = GX2_PRIMITIVE_MODE_QUADS, u32 vtxCount = 4)
     {
         switch(primitive)
         {
             default:
-            case GX2_PRIMITIVE_QUADS:
+            case GX2_PRIMITIVE_MODE_QUADS:
             {
-                GX2DrawEx(GX2_PRIMITIVE_QUADS, vtxCount, 0, 1);
+                GX2DrawEx(GX2_PRIMITIVE_MODE_QUADS, vtxCount, 0, 1);
                 break;
             }
-            case GX2_PRIMITIVE_TRIANGLES:
+            case GX2_PRIMITIVE_MODE_TRIANGLES:
             {
-                GX2DrawEx(GX2_PRIMITIVE_TRIANGLES, vtxCount, 0, 1);
+                GX2DrawEx(GX2_PRIMITIVE_MODE_TRIANGLES, vtxCount, 0, 1);
                 break;
             }
-            case GX2_PRIMITIVE_TRIANGLE_FAN:
+            case GX2_PRIMITIVE_MODE_TRIANGLE_FAN:
             {
-                GX2DrawEx(GX2_PRIMITIVE_TRIANGLE_FAN, vtxCount, 0, 1);
+                GX2DrawEx(GX2_PRIMITIVE_MODE_TRIANGLE_FAN, vtxCount, 0, 1);
                 break;
             }
-            case GX2_PRIMITIVE_LINES:
+            case GX2_PRIMITIVE_MODE_LINES:
             {
-                GX2DrawEx(GX2_PRIMITIVE_LINES, vtxCount, 0, 1);
+                GX2DrawEx(GX2_PRIMITIVE_MODE_LINES, vtxCount, 0, 1);
                 break;
             }
-            case GX2_PRIMITIVE_LINE_STRIP:
+            case GX2_PRIMITIVE_MODE_LINE_STRIP:
             {
-                GX2DrawEx(GX2_PRIMITIVE_LINE_STRIP, vtxCount, 0, 1);
+                GX2DrawEx(GX2_PRIMITIVE_MODE_LINE_STRIP, vtxCount, 0, 1);
                 break;
             }
             //! TODO: add other primitives later
