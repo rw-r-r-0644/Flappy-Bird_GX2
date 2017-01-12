@@ -16,7 +16,6 @@
  ****************************************************************************/
 #include "GuiSound.h"
 #include "sounds/SoundHandler.hpp"
-#include "dynamic_libs/os_functions.h"
 
 GuiSound::GuiSound(const char * filepath)
 {

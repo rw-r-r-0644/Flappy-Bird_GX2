@@ -17,18 +17,12 @@
 #ifndef GUI_TRIGGER_H_
 #define GUI_TRIGGER_H_
 
-#include "dynamic_libs/os_functions.h"
-
+#include "common/types.h"
 
 //!Menu input trigger management. Determine if action is neccessary based on input data by comparing controller input data to a specific trigger element.
 class GuiTrigger
 {
 public:
-    enum eClicked{
-        CLICKED_NONE        = 0x00,
-        CLICKED_TOUCH       = 0x01,
-        CLICKED_BUTTON      = 0x02,
-    };
     enum eChannels {
         CHANNEL_1       = 0x01,
         CHANNEL_2       = 0x02,
@@ -91,7 +85,7 @@ public:
     bool right(const GuiController *controller) const;
     bool up(const GuiController *controller) const;
     bool down(const GuiController *controller) const;
-    int clicked(const GuiController *controller) const;
+    bool clicked(const GuiController *controller) const;
     bool held(const GuiController *controller) const;
     bool released(const GuiController *controller) const;
 private:

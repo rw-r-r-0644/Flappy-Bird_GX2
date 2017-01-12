@@ -1,8 +1,8 @@
 #ifndef RECOURCES_H_
 #define RECOURCES_H_
 
-
 #include <map>
+#include "common/types.h"
 
 //! forward declaration
 class GuiImageData;

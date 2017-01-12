@@ -17,7 +17,14 @@
 #ifndef __CVIDEO_H_
 #define __CVIDEO_H_
 
-#include "dynamic_libs/gx2_functions.h"
+#include <gx2/context.h>
+#include <gx2/clear.h>
+#include <gx2/display.h>
+#include <gx2/event.h>
+#include <gx2/state.h>
+#include <gx2/surface.h>
+#include <gx2/swap.h>
+
 #include "shaders/Shader.h"
 
 class CVideo
@@ -42,15 +49,15 @@ public:
 
     void prepareRendering(void) {
         GX2ClearColor(currColorBuffer, 0.0f, 0.0f, 0.0f, 1.0f);
-        GX2ClearDepthStencilEx(currDepthBuffer, currDepthBuffer->clear_depth, currDepthBuffer->clear_stencil, GX2_CLEAR_BOTH);
+        GX2ClearDepthStencilEx(currDepthBuffer, currDepthBuffer->depthClear, currDepthBuffer->stencilClear, GX2_CLEAR_FLAGS_BOTH);
 
         GX2SetContextState(currContextState);
         GX2SetViewport(0.0f, 0.0f, currColorBuffer->surface.width, currColorBuffer->surface.height, 0.0f, 1.0f);
         GX2SetScissor(0, 0, currColorBuffer->surface.width, currColorBuffer->surface.height);
 
-        GX2SetDepthOnlyControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_LEQUAL);
+        GX2SetDepthOnlyControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_FUNC_LEQUAL);
         GX2SetColorControl(GX2_LOGIC_OP_COPY, 1, GX2_DISABLE, GX2_ENABLE);
-        GX2SetBlendControl(GX2_RENDER_TARGET_0, GX2_BLEND_SRC_ALPHA, GX2_BLEND_ONE_MINUS_SRC_ALPHA, GX2_BLEND_COMBINE_ADD, GX2_ENABLE, GX2_BLEND_SRC_ALPHA, GX2_BLEND_ONE_MINUS_SRC_ALPHA, GX2_BLEND_COMBINE_ADD);
+        GX2SetBlendControl(GX2_RENDER_TARGET_0, GX2_BLEND_MODE_SRC_ALPHA, GX2_BLEND_MODE_INV_SRC_ALPHA, GX2_BLEND_COMBINE_MODE_ADD, GX2_ENABLE, GX2_BLEND_MODE_SRC_ALPHA, GX2_BLEND_MODE_INV_SRC_ALPHA, GX2_BLEND_COMBINE_MODE_ADD);
         GX2SetCullOnlyControl(GX2_FRONT_FACE_CCW, GX2_DISABLE, GX2_ENABLE);
     }
 
@@ -59,21 +66,21 @@ public:
         if(bEnable)
         {
             GX2SetStencilMask(0xff, 0xff, 0x01, 0xff, 0xff, 0x01);
-            GX2SetDepthStencilControl(GX2_DISABLE, GX2_DISABLE, GX2_COMPARE_LEQUAL, GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_ALWAYS, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP, GX2_STENCIL_REPLACE,
-                                      GX2_COMPARE_ALWAYS, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP, GX2_STENCIL_REPLACE);
+            GX2SetDepthStencilControl(GX2_DISABLE, GX2_DISABLE, GX2_COMPARE_FUNC_LEQUAL, GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_FUNC_ALWAYS, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_REPLACE,
+                                      GX2_COMPARE_FUNC_ALWAYS, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_REPLACE);
         }
         else
         {
             GX2SetStencilMask(0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            GX2SetDepthStencilControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_LEQUAL, GX2_DISABLE, GX2_DISABLE, GX2_COMPARE_NEVER, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP,
-                                      GX2_COMPARE_NEVER, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP, GX2_STENCIL_KEEP);
+            GX2SetDepthStencilControl(GX2_ENABLE, GX2_ENABLE, GX2_COMPARE_FUNC_LEQUAL, GX2_DISABLE, GX2_DISABLE, GX2_COMPARE_FUNC_NEVER, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP,
+                                      GX2_COMPARE_FUNC_NEVER, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP, GX2_STENCIL_FUNCTION_KEEP);
         }
     }
 
     void drcDrawDone(void) {
         //! on DRC we do a hardware AA because FXAA does not look good
         //renderFXAA(&drcAaTexture, &aaSampler);
-        GX2CopyColorBufferToScanBuffer(&drcColorBuffer, GX2_SCAN_TARGET_DRC_FIRST);
+        GX2CopyColorBufferToScanBuffer(&drcColorBuffer, GX2_SCAN_TARGET_DRC);
     }
 
     void tvDrawDone(void) {
@@ -161,9 +168,6 @@ public:
         rayDirection = glm::normalize(rayDirectionWorld);
     }
 private:
-    static void *GX2RAlloc(u32 flags, u32 size, u32 align);
-    static void GX2RFree(u32 flags, void* p);
-
     void renderFXAA(const GX2Texture * texture, const GX2Sampler *sampler);
 
     void *gx2CommandBuffer;

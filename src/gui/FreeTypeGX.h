@@ -23,7 +23,6 @@
 #ifndef FREETYPEGX_H_
 #define FREETYPEGX_H_
 
-#include <gctypes.h>
 #include <string>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -37,7 +36,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "dynamic_libs/gx2_functions.h"
+#include "common/types.h"
 
 /*! \struct ftgxCharData_
  *

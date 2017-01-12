@@ -292,10 +292,10 @@ ShaderFractalColor::ShaderFractalColor()
     colorIntensityLocation = 4;
     fadeOutLocation = 8;
     fractalLocation = 12;
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_blur_border", GX2_VAR_TYPE_FLOAT, 1, blurLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_VAR_TYPE_VEC4, 1, colorIntensityLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_out_alpha", GX2_VAR_TYPE_VEC4, 1, fadeOutLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_fract_alpha", GX2_VAR_TYPE_INT, 1, fractalLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_blur_border", GX2_SHADER_VAR_TYPE_FLOAT, 1, blurLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_SHADER_VAR_TYPE_FLOAT4, 1, colorIntensityLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_out_alpha", GX2_SHADER_VAR_TYPE_FLOAT4, 1, fadeOutLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_fract_alpha", GX2_SHADER_VAR_TYPE_INT, 1, fractalLocation, 0xffffffff });
 
     //! create vertex shader
     vertexShader.setProgram(cpVertexShaderProgram, sizeof(cpVertexShaderProgram), cpVertexShaderRegs, sizeof(cpVertexShaderRegs));
@@ -303,21 +303,21 @@ ShaderFractalColor::ShaderFractalColor()
     modelMatrixLocation = 0;
     projectionMatrixLocation = 16;
     viewMatrixLocation = 32;
-    vertexShader.addUniformVar((GX2UniformVar){ "modelMatrix", GX2_VAR_TYPE_MAT4, 1, modelMatrixLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "projectionMatrix", GX2_VAR_TYPE_MAT4, 1, projectionMatrixLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "viewMatrix", GX2_VAR_TYPE_MAT4, 1, viewMatrixLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "modelMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, modelMatrixLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "projectionMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, projectionMatrixLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "viewMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, viewMatrixLocation, 0xffffffff });
 
     positionLocation = 0;
     colorLocation = 1;
     texCoordLocation = 2;
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_colors", GX2_VAR_TYPE_VEC4, 0, colorLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_VAR_TYPE_VEC3, 0, positionLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_VAR_TYPE_VEC2, 0, texCoordLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_colors", GX2_SHADER_VAR_TYPE_FLOAT4, 0, colorLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_SHADER_VAR_TYPE_FLOAT3, 0, positionLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_SHADER_VAR_TYPE_FLOAT2, 0, texCoordLocation });
 
     //! setup attribute streams
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_32_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(2), colorLocation, 2, 0, GX2_ATTRIB_FORMAT_8_8_8_8_UNORM);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(2), colorLocation, 2, 0, GX2_ATTRIB_FORMAT_UNORM_8_8_8_8);
 
     //! create fetch shader
     fetchShader = new FetchShader(vertexShader.getAttributeBuffer(), vertexShader.getAttributesCount());
@@ -334,20 +334,20 @@ ShaderFractalColor::ShaderFractalColor()
     posVtxs[i++] =  1.0f; posVtxs[i++] = -1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] =  1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] = -1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, posVtxs, ciPositionVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, posVtxs, ciPositionVtxsSize);
 
     i = 0;
     texCoords[i++] = 0.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 0.0f;
     texCoords[i++] = 0.0f; texCoords[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, texCoords, ciTexCoordsVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, texCoords, ciTexCoordsVtxsSize);
 
 
     for(i = 0; i < (int)ciColorVtxsSize; i++)
         colorVtxs[i] = 0xff;
 
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, colorVtxs, ciColorVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, colorVtxs, ciColorVtxsSize);
 }
 
 ShaderFractalColor::~ShaderFractalColor()

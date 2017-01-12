@@ -172,22 +172,22 @@ FXAAShader::FXAAShader()
     pixelShader.setProgram(cpPixelShaderProgram, sizeof(cpPixelShaderProgram), cpPixelShaderRegs, sizeof(cpPixelShaderRegs));
 
     resolutionLocation = 0;
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_resolution", GX2_VAR_TYPE_VEC2, 1, resolutionLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_resolution", GX2_SHADER_VAR_TYPE_FLOAT2, 1, resolutionLocation, -1 });
 
     samplerLocation = 0;
-    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_TYPE_2D, samplerLocation });
+    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_VAR_TYPE_SAMPLER_2D, samplerLocation });
 
     //! create vertex shader
     vertexShader.setProgram(cpVertexShaderProgram, sizeof(cpVertexShaderProgram), cpVertexShaderRegs, sizeof(cpVertexShaderRegs));
 
     positionLocation = 0;
     texCoordLocation = 1;
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_VAR_TYPE_VEC3, 0, positionLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_VAR_TYPE_VEC2, 0, texCoordLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_SHADER_VAR_TYPE_FLOAT3, 0, positionLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_SHADER_VAR_TYPE_FLOAT2, 0, texCoordLocation });
 
     //! setup attribute streams
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_32_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_32_32_FLOAT);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32);
 
     //! create fetch shader
     fetchShader = new FetchShader(vertexShader.getAttributeBuffer(), vertexShader.getAttributesCount());
@@ -202,14 +202,14 @@ FXAAShader::FXAAShader()
     posVtxs[i++] =  1.0f; posVtxs[i++] = -1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] =  1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] = -1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, posVtxs, ciPositionVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, posVtxs, ciPositionVtxsSize);
 
     i = 0;
     texCoords[i++] = 0.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 0.0f;
     texCoords[i++] = 0.0f; texCoords[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, texCoords, ciTexCoordsVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, texCoords, ciTexCoordsVtxsSize);
 }
 
 FXAAShader::~FXAAShader()

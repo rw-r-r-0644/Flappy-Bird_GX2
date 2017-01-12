@@ -26,10 +26,8 @@ class AsyncDeleter : public CThread
 public:
     static void destroyInstance()
     {
-        if(deleterInstance != NULL){
-            delete deleterInstance;
-            deleterInstance = NULL;
-        }
+        delete deleterInstance;
+        deleterInstance = NULL;
     }
 
     class Element
@@ -43,6 +41,7 @@ public:
     {
         if(!deleterInstance)
             deleterInstance = new AsyncDeleter;
+
         deleterInstance->deleteElements.push(e);
     }
 

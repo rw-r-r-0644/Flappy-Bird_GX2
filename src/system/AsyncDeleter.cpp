@@ -54,7 +54,7 @@ void AsyncDeleter::executeThread(void)
     while(!exitApplication)
     {
         suspendThread();
-        log_printf("AsyncDeleter thread running\n");
+
         //! delete elements that require post process deleting
         //! because otherwise they would block or do invalid access on GUI thread
         while(!realDeleteElements.empty())

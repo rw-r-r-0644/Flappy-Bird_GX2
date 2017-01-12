@@ -92,7 +92,7 @@ void GuiImage::internalInit(int w, int h)
     posVtxs = NULL;
     texCoords = NULL;
     vtxCount = 4;
-    primitive = GX2_PRIMITIVE_QUADS;
+    primitive = GX2_PRIMITIVE_MODE_QUADS;
 
     imageAngle = 0.0f;
     blurDirection = glm::vec3(0.0f);
@@ -120,7 +120,7 @@ GX2Color GuiImage::getPixel(int x, int y)
 		return (GX2Color){0, 0, 0, 0};
 
     u32 pitch = imageData->getTexture()->surface.pitch;
-    u32 *imagePtr = (u32*)imageData->getTexture()->surface.image_data;
+    u32 *imagePtr = (u32*)imageData->getTexture()->surface.image;
 
     u32 color_u32 = imagePtr[y * pitch + x];
     GX2Color color;
@@ -138,7 +138,7 @@ void GuiImage::setPixel(int x, int y, const GX2Color & color)
 
 
     u32 pitch = imageData->getTexture()->surface.pitch;
-    u32 *imagePtr = (u32*)imageData->getTexture()->surface.image_data;
+    u32 *imagePtr = (u32*)imageData->getTexture()->surface.image;
     imagePtr[y * pitch + x] = (color.r << 24) | (color.g << 16)  | (color.b << 8)  | (color.a << 0);
 }
 
@@ -260,7 +260,7 @@ void GuiImage::draw(CVideo *pVideo)
 //	}
     if(colorVtxsDirty && colorVtxs) {
         //! flush color vertex only on main GX2 thread
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, colorVtxs, colorCount * ColorShader::cuColorAttrSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, colorVtxs, colorCount * ColorShader::cuColorAttrSize);
         colorVtxsDirty = false;
     }
 

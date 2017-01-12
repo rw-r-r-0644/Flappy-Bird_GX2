@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#include "GuiText.h"
-#include "FreeTypeGX.h"
 #include "video/CVideo.h"
+#include "FreeTypeGX.h"
+#include "GuiText.h"
 
 FreeTypeGX * GuiText::presentFont = NULL;
 int GuiText::presetSize = 28;

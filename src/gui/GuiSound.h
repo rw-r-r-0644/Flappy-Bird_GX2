@@ -17,7 +17,7 @@
 #ifndef GUI_SOUND_H_
 #define GUI_SOUND_H_
 
-#include <gctypes.h>
+#include "common/types.h"
 #include "system/AsyncDeleter.h"
 
 //!Sound conversion and playback. A wrapper for other sound libraries - ASND, libmad, ltremor, etc
@@ -28,7 +28,7 @@ class GuiSound : public AsyncDeleter::Element
 		//!\param sound Pointer to the sound data
 		//!\param filesize Length of sound data
 		GuiSound(const char * filepath);
-		GuiSound(const u8 * sound, int length);
+		GuiSound(const u8 * sound, s32 length);
 		//!Destructor
 		virtual ~GuiSound();
 		//!Load a file and replace the old one

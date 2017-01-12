@@ -17,8 +17,6 @@
  ****************************************************************************/
 #include "MainWindow.h"
 #include "MainWindowTV.h"
-#include "dynamic_libs/os_functions.h"
-#include "dynamic_libs/socket_functions.h"
 #include "Application.h"
 #include "utils/StringTools.h"
 #include "utils/logger.h"

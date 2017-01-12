@@ -21,7 +21,6 @@
 #include "GuiImage.h"
 #include "system/CThread.h"
 #include "system/CMutex.h"
-#include "dynamic_libs/os_functions.h"
 
 class GuiImageAsync : public GuiImage
 {
@@ -34,13 +33,9 @@ class GuiImageAsync : public GuiImage
 		static void removeFromQueue(GuiImageAsync * image) {
 		    threadRemoveImage(image);
 		}
-
-        //! don't forget to LOCK GUI if using this asynchron call
-		sigslot::signal1<GuiImageAsync *> imageLoaded;
-		static void threadExit();
-
 	private:
 		static void threadInit();
+		static void threadExit();
 
 		GuiImageData *imgData;
 	    std::string filename;

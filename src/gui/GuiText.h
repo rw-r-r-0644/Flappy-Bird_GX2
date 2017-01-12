@@ -17,6 +17,7 @@
 #ifndef GUI_TEXT_H_
 #define GUI_TEXT_H_
 
+#include "common/gx2_ext.h"
 #include "GuiElement.h"
 //!Forward declaration
 class FreeTypeGX;

@@ -25,7 +25,7 @@ GridBackground::GridBackground(GuiImageData *img)
         m_posVtxs[i++] =  1.0f; m_posVtxs[i++] = 0.0f; m_posVtxs[i++] = 1.0f;
         m_posVtxs[i++] =  1.0f; m_posVtxs[i++] = 0.0f; m_posVtxs[i++] = -1.0f;
         m_posVtxs[i++] = -1.0f; m_posVtxs[i++] = 0.0f; m_posVtxs[i++] = -1.0f;
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, m_posVtxs, vtxCount * Shader3D::cuVertexAttrSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, m_posVtxs, vtxCount * Shader3D::cuVertexAttrSize);
     }
 
     if(m_texCoords)
@@ -50,7 +50,7 @@ GridBackground::GridBackground(GuiImageData *img)
             m_texCoords[i*2 + 1] = texCoordVec[i][1];
         }
 
-        GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, m_texCoords, vtxCount * Shader3D::cuTexCoordAttrSize);
+        GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, m_texCoords, vtxCount * Shader3D::cuTexCoordAttrSize);
     }
 
     //! assign to internal variables which are const but oh well
@@ -96,5 +96,5 @@ void GridBackground::draw(CVideo *pVideo, const glm::mat4 & modelView)
     Shader3D::instance()->setAlphaFadeOut(alphaFadeOut);
     Shader3D::instance()->setColorIntensity(colorIntensity);
     Shader3D::instance()->setAttributeBuffer(vtxCount, posVtxs, texCoords);
-    Shader3D::instance()->draw(GX2_PRIMITIVE_QUADS, vtxCount);
+    Shader3D::instance()->draw(GX2_PRIMITIVE_MODE_QUADS, vtxCount);
 }

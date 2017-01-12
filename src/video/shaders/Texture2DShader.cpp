@@ -204,11 +204,11 @@ Texture2DShader::Texture2DShader()
 
     blurLocation = 0;
     colorIntensityLocation = 4;
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_blur_texture_direction", GX2_VAR_TYPE_VEC3, 1, blurLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_VAR_TYPE_VEC4, 1, colorIntensityLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_blur_texture_direction", GX2_SHADER_VAR_TYPE_FLOAT3, 1, blurLocation, -1 });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_SHADER_VAR_TYPE_FLOAT4, 1, colorIntensityLocation, -1 });
 
     samplerLocation = 0;
-    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_TYPE_2D, samplerLocation });
+    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_VAR_TYPE_SAMPLER_2D, samplerLocation });
 
     //! create vertex shader
     vertexShader.setProgram(cpVertexShaderProgram, sizeof(cpVertexShaderProgram), cpVertexShaderRegs, sizeof(cpVertexShaderRegs));
@@ -216,18 +216,18 @@ Texture2DShader::Texture2DShader()
     angleLocation = 0;
     offsetLocation = 4;
     scaleLocation = 8;
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_angle", GX2_VAR_TYPE_FLOAT, 1, angleLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_offset", GX2_VAR_TYPE_VEC3, 1, offsetLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "unf_scale", GX2_VAR_TYPE_VEC3, 1, scaleLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_angle", GX2_SHADER_VAR_TYPE_FLOAT, 1, angleLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_offset", GX2_SHADER_VAR_TYPE_FLOAT3, 1, offsetLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "unf_scale", GX2_SHADER_VAR_TYPE_FLOAT3, 1, scaleLocation, -1 });
 
     positionLocation = 0;
     texCoordLocation = 1;
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_VAR_TYPE_VEC3, 0, positionLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_VAR_TYPE_VEC2, 0, texCoordLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_SHADER_VAR_TYPE_FLOAT3, 0, positionLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_SHADER_VAR_TYPE_FLOAT2, 0, texCoordLocation });
 
     //! setup attribute streams
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_32_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_32_32_FLOAT);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32);
 
     //! create fetch shader
     fetchShader = new FetchShader(vertexShader.getAttributeBuffer(), vertexShader.getAttributesCount());
@@ -243,14 +243,14 @@ Texture2DShader::Texture2DShader()
     posVtxs[i++] =  1.0f; posVtxs[i++] = -1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] =  1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] = -1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, posVtxs, ciPositionVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, posVtxs, ciPositionVtxsSize);
 
     i = 0;
     texCoords[i++] = 0.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 0.0f;
     texCoords[i++] = 0.0f; texCoords[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, texCoords, ciTexCoordsVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, texCoords, ciTexCoordsVtxsSize);
 }
 
 Texture2DShader::~Texture2DShader()

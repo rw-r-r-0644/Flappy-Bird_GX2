@@ -198,12 +198,12 @@ Shader3D::Shader3D()
     colorIntensityLocation = 0;
     fadeDistanceLocation = 4;
     fadeOutLocation = 8;
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_VAR_TYPE_VEC4, 1, colorIntensityLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_distance", GX2_VAR_TYPE_FLOAT, 1, fadeDistanceLocation, 0xffffffff });
-    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_out_alpha", GX2_VAR_TYPE_VEC4, 1, fadeOutLocation, 0xffffffff });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_color_intensity", GX2_SHADER_VAR_TYPE_FLOAT4, 1, colorIntensityLocation, -1 });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_distance", GX2_SHADER_VAR_TYPE_FLOAT, 1, fadeDistanceLocation, -1 });
+    pixelShader.addUniformVar((GX2UniformVar){ "unf_fade_out_alpha", GX2_SHADER_VAR_TYPE_FLOAT4, 1, fadeOutLocation, -1 });
 
     samplerLocation = 0;
-    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_TYPE_2D, samplerLocation });
+    pixelShader.addSamplerVar((GX2SamplerVar){ "sampl_texture", GX2_SAMPLER_VAR_TYPE_SAMPLER_2D, samplerLocation });
 
     //! create vertex shader
     vertexShader.setProgram(cpVertexShaderProgram, sizeof(cpVertexShaderProgram), cpVertexShaderRegs, sizeof(cpVertexShaderRegs));
@@ -211,18 +211,18 @@ Shader3D::Shader3D()
     modelMatrixLocation = 0;
     projectionMatrixLocation = 16;
     viewMatrixLocation = 32;
-    vertexShader.addUniformVar((GX2UniformVar){ "modelMatrix", GX2_VAR_TYPE_MAT4, 1, modelMatrixLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "viewMatrix", GX2_VAR_TYPE_MAT4, 1, projectionMatrixLocation, 0xffffffff });
-    vertexShader.addUniformVar((GX2UniformVar){ "projectionMatrix", GX2_VAR_TYPE_MAT4, 1, viewMatrixLocation, 0xffffffff });
+    vertexShader.addUniformVar((GX2UniformVar){ "modelMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, modelMatrixLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "viewMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, projectionMatrixLocation, -1 });
+    vertexShader.addUniformVar((GX2UniformVar){ "projectionMatrix", GX2_SHADER_VAR_TYPE_MATRIX4X4, 1, viewMatrixLocation, -1 });
 
     positionLocation = 0;
     texCoordLocation = 1;
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_VAR_TYPE_VEC3, 0, positionLocation });
-    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_VAR_TYPE_VEC2, 0, texCoordLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_position", GX2_SHADER_VAR_TYPE_FLOAT4, 0, positionLocation });
+    vertexShader.addAttribVar((GX2AttribVar){ "attr_texture_coord", GX2_SHADER_VAR_TYPE_FLOAT2, 0, texCoordLocation });
 
     //! setup attribute streams
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_32_32_32_FLOAT);
-    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_32_32_FLOAT);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(0), positionLocation, 0, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32_32);
+    GX2InitAttribStream(vertexShader.getAttributeBuffer(1), texCoordLocation, 1, 0, GX2_ATTRIB_FORMAT_FLOAT_32_32);
 
     //! create fetch shader
     fetchShader = new FetchShader(vertexShader.getAttributeBuffer(), vertexShader.getAttributesCount());
@@ -238,14 +238,14 @@ Shader3D::Shader3D()
     posVtxs[i++] =  1.0f; posVtxs[i++] = -1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] =  1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
     posVtxs[i++] = -1.0f; posVtxs[i++] =  1.0f; posVtxs[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, posVtxs, ciPositionVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, posVtxs, ciPositionVtxsSize);
 
     i = 0;
     texCoords[i++] = 0.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 1.0f;
     texCoords[i++] = 1.0f; texCoords[i++] = 0.0f;
     texCoords[i++] = 0.0f; texCoords[i++] = 0.0f;
-    GX2Invalidate(GX2_INVALIDATE_CPU_ATTRIB_BUFFER, texCoords, ciTexCoordsVtxsSize);
+    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_ATTRIBUTE_BUFFER, texCoords, ciTexCoordsVtxsSize);
 }
 
 Shader3D::~Shader3D()

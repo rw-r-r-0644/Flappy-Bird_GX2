@@ -42,7 +42,6 @@ GuiElement::GuiElement()
 	selectable = false;
 	clickable = false;
 	holdable = false;
-	drawOverOnlyWhenSelected = false;
 	visible = true;
 	yoffsetDyn = 0;
 	xoffsetDyn = 0;

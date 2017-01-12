@@ -84,8 +84,6 @@ class GuiFrame : public GuiElement
 		virtual void exec() {}
 		//!virtual updateEffects which is called by the main loop
 		virtual void updateEffects();
-		//!virtual process which is called by the main loop
-		virtual void process();
 		//! Signals
 		//! On Closing
 		sigslot::signal1<GuiFrame *> closing;
@@ -93,6 +91,17 @@ class GuiFrame : public GuiElement
 		bool dim;   //! Enable/disable dim of a window only
 		GuiFrame *parent; //!< Parent Window
 		std::vector<GuiElement*> elements; //!< Contains all elements within the GuiFrame
+
+		void updateElementList(void);
+
+		struct ListChangeElement
+		{
+		    bool addElement;
+		    int position;
+            GuiElement *element;
+		};
+		std::queue<ListChangeElement> listChangeQueue;
+		CMutex queueMutex;
 };
 
 #endif
