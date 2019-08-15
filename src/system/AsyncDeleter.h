@@ -21,28 +21,40 @@
 #include "CThread.h"
 #include "CMutex.h"
 
-class AsyncDeleter : public CThread
-{
+class AsyncDeleter : public CThread {
 public:
-    static void destroyInstance()
-    {
-        delete deleterInstance;
-        deleterInstance = NULL;
+    static void destroyInstance() {
+        if(deleterInstance != NULL) {
+            delete deleterInstance;
+            deleterInstance = NULL;
+        }
     }
 
-    class Element
-    {
+    class Element {
     public:
         Element() {}
         virtual ~Element() {}
     };
 
-    static void pushForDelete(AsyncDeleter::Element *e)
-    {
-        if(!deleterInstance)
-            deleterInstance = new AsyncDeleter;
-
+    static void pushForDelete(AsyncDeleter::Element *e) {
+        if(!deleterInstance) {
+            deleterInstance = new AsyncDeleter();
+        }
         deleterInstance->deleteElements.push(e);
+    }
+
+    static BOOL deleteListEmpty() {
+        if(!deleterInstance) {
+            return true;
+        }
+        return deleterInstance->deleteElements.empty();
+    }
+
+    static BOOL realListEmpty() {
+        if(!deleterInstance) {
+            return true;
+        }
+        return deleterInstance->realDeleteElements.empty();
     }
 
     static void triggerDeleteProcess(void);
@@ -55,7 +67,7 @@ private:
 
     void executeThread(void);
 
-    bool exitApplication;
+    BOOL exitApplication;
     std::queue<AsyncDeleter::Element *> deleteElements;
     std::queue<AsyncDeleter::Element *> realDeleteElements;
     CMutex deleteMutex;

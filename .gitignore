@@ -1,0 +1,5 @@
+build/
+*.rpx
+*.elf
+*.exe
+src/resources/filelist.h

@@ -19,12 +19,11 @@
 #include <proc_ui/procui.h>
 #include <sysapp/launch.h>
 #include "Application.h"
-#include "common/common.h"
 #include "gui/FreeTypeGX.h"
 #include "gui/VPadController.h"
 #include "gui/WPadController.h"
 #include "resources/Resources.h"
-#include "sounds/SoundHandler.hpp"
+#include "gui/sounds/SoundHandler.hpp"
 #include "system/memory.h"
 #include "utils/logger.h"
 
@@ -38,7 +37,7 @@ Application::Application()
 	, video(NULL)
     , mainWindow(NULL)
     , fontSystem(NULL)
-    , exitCode(EXIT_RELAUNCH_ON_LOAD)
+    , exitCode(0)
 {
     controller[0] = new VPadController(GuiTrigger::CHANNEL_1);
     controller[1] = new WPadController(GuiTrigger::CHANNEL_2);
@@ -47,10 +46,10 @@ Application::Application()
     controller[4] = new WPadController(GuiTrigger::CHANNEL_5);
 
     //! create bgMusic
-//    bgMusic = new GuiSound(Resources::GetFile("bgMusic.ogg"), Resources::GetFileSize("bgMusic.ogg"));
-//    bgMusic->SetLoop(true);
-//    bgMusic->Play();
-//    bgMusic->SetVolume(50);
+    bgMusic = new GuiSound(Resources::GetFile("bgMusic.ogg"), Resources::GetFileSize("bgMusic.ogg"));
+    bgMusic->SetLoop(true);
+    bgMusic->Play();
+    bgMusic->SetVolume(50);
 
 	exitApplication = false;
 

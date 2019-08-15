@@ -55,7 +55,7 @@ public:
         appendDrc(e);
     }
 
-    void insertTv(u32 pos, GuiElement *e)
+    void insertTv(uint32_t pos, GuiElement *e)
     {
         if(!e)
             return;
@@ -63,7 +63,7 @@ public:
         removeTv(e);
         tvElements.insert(tvElements.begin() + pos, e);
     }
-    void insertDrc(u32 pos, GuiElement *e)
+    void insertDrc(uint32_t pos, GuiElement *e)
     {
         if(!e)
             return;
@@ -72,7 +72,7 @@ public:
         drcElements.insert(drcElements.begin() + pos, e);
     }
 
-    void insert(u32 pos, GuiElement *e)
+    void insert(uint32_t pos, GuiElement *e)
     {
         insertTv(pos, e);
         insertDrc(pos, e);
@@ -80,7 +80,7 @@ public:
 
     void removeTv(GuiElement *e)
     {
-        for(u32 i = 0; i < tvElements.size(); ++i)
+        for(uint32_t i = 0; i < tvElements.size(); ++i)
         {
             if(e == tvElements[i])
             {
@@ -91,7 +91,7 @@ public:
     }
     void removeDrc(GuiElement *e)
     {
-        for(u32 i = 0; i < drcElements.size(); ++i)
+        for(uint32_t i = 0; i < drcElements.size(); ++i)
         {
             if(e == drcElements[i])
             {

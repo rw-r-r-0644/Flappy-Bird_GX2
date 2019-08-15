@@ -14,33 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#include "AsyncDeleter.h"
+#include <system/AsyncDeleter.h>
 
 AsyncDeleter * AsyncDeleter::deleterInstance = NULL;
 
 AsyncDeleter::AsyncDeleter()
-	: CThread(CThread::eAttributeAffCore1 | CThread::eAttributePinnedAff)
-	, exitApplication(false)
-{
+    : CThread(CThread::eAttributeAffCore1 | CThread::eAttributePinnedAff)
+    , exitApplication(false) {
 }
 
-AsyncDeleter::~AsyncDeleter()
-{
+AsyncDeleter::~AsyncDeleter() {
     exitApplication = true;
 }
 
-void AsyncDeleter::triggerDeleteProcess(void)
-{
-    if(!deleterInstance)
-        deleterInstance = new AsyncDeleter;
+void AsyncDeleter::triggerDeleteProcess(void) {
+    if(!deleterInstance){
+        return;
+    }
 
     //! to trigger the event after GUI process is finished execution
     //! this function is used to swap elements from one to next array
-    if(!deleterInstance->deleteElements.empty())
-    {
+    if(!deleterInstance->deleteElements.empty()) {
         deleterInstance->deleteMutex.lock();
-        while(!deleterInstance->deleteElements.empty())
-        {
+        while(!deleterInstance->deleteElements.empty()) {
             deleterInstance->realDeleteElements.push(deleterInstance->deleteElements.front());
             deleterInstance->deleteElements.pop();
         }
@@ -49,16 +45,12 @@ void AsyncDeleter::triggerDeleteProcess(void)
     }
 }
 
-void AsyncDeleter::executeThread(void)
-{
-    while(!exitApplication)
-    {
-        suspendThread();
-
+void AsyncDeleter::executeThread(void) {
+    while(!exitApplication || !realDeleteElements.empty()) {
+        if(realDeleteElements.empty()) suspendThread();
         //! delete elements that require post process deleting
         //! because otherwise they would block or do invalid access on GUI thread
-        while(!realDeleteElements.empty())
-        {
+        while(!realDeleteElements.empty()) {
             deleteMutex.lock();
             AsyncDeleter::Element *element = realDeleteElements.front();
             realDeleteElements.pop();
