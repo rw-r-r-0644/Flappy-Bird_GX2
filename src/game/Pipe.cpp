@@ -17,6 +17,7 @@
 #include "Pipe.h"
 #include "gui/GuiTrigger.h"
 #include "gui/GuiController.h"
+#include "resources/Resources.h"
 
 /**
  * Constructor for the GuiButton class.
