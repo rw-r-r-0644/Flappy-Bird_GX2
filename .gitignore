@@ -3,3 +3,5 @@ build/
 *.elf
 *.exe
 src/resources/filelist.h
+*.wbf
+out/

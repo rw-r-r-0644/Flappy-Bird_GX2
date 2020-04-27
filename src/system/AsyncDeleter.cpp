@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
-#include <system/AsyncDeleter.h>
+#include "AsyncDeleter.h"
 
 AsyncDeleter * AsyncDeleter::deleterInstance = NULL;
 
@@ -28,9 +28,8 @@ AsyncDeleter::~AsyncDeleter() {
 }
 
 void AsyncDeleter::triggerDeleteProcess(void) {
-    if(!deleterInstance){
-        return;
-    }
+    if(!deleterInstance)
+        deleterInstance = new AsyncDeleter;
 
     //! to trigger the event after GUI process is finished execution
     //! this function is used to swap elements from one to next array
@@ -46,13 +45,14 @@ void AsyncDeleter::triggerDeleteProcess(void) {
 }
 
 void AsyncDeleter::executeThread(void) {
-    while(!exitApplication || !realDeleteElements.empty()) {
-        if(realDeleteElements.empty()) suspendThread();
+    while(!exitApplication) {
+        suspendThread();
+
         //! delete elements that require post process deleting
         //! because otherwise they would block or do invalid access on GUI thread
         while(!realDeleteElements.empty()) {
             deleteMutex.lock();
-            AsyncDeleter::Element *element = realDeleteElements.front();
+            GuiElement *element = realDeleteElements.front();
             realDeleteElements.pop();
             deleteMutex.unlock();
 

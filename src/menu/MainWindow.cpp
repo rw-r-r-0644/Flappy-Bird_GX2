@@ -21,6 +21,7 @@
 #include "utils/StringTools.h"
 #include "utils/logger.h"
 #include "resources/Resources.h"
+#include "system/AsyncDeleter.h"
 
 MainWindow::MainWindow(int w, int h)
     : width(w)

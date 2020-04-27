@@ -25,6 +25,7 @@
 #include "resources/Resources.h"
 #include "gui/sounds/SoundHandler.hpp"
 #include "system/memory.h"
+#include "system/AsyncDeleter.h"
 #include "utils/logger.h"
 
 Application *Application::applicationInstance = NULL;
