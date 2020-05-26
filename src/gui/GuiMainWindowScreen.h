@@ -17,8 +17,7 @@
 #ifndef GUI_MAIN_WINDOW_SCREEN_H_
 #define GUI_MAIN_WINDOW_SCREEN_H_
 
-#include "Gui.h"
-#include "sigslot.h"
+#include <gui/Gui.h>
 
 class GuiMainWindowScreen : public GuiFrame
 {

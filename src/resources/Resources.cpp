@@ -3,7 +3,7 @@
 #include "Resources.h"
 #include "filelist.h"
 #include "system/AsyncDeleter.h"
-#include "fs/fs_utils.h"
+#include "fs/FSUtils.h"
 #include "gui/GuiImageAsync.h"
 #include "gui/GuiSound.h"
 
@@ -43,20 +43,20 @@ bool Resources::LoadFiles(const char * path)
         fullpath += "/";
         fullpath += RecourceList[i].filename;
 
-        u8 * buffer = NULL;
-        u32 filesize = 0;
+        uint8_t * buffer = NULL;
+        uint32_t filesize = 0;
 
-        LoadFileToMem(fullpath.c_str(), &buffer, &filesize);
+        FSUtils::LoadFileToMem(fullpath.c_str(), &buffer, &filesize);
 
         RecourceList[i].CustomFile = buffer;
-        RecourceList[i].CustomFileSize = (u32) filesize;
+        RecourceList[i].CustomFileSize = (uint32_t) filesize;
         result |= (buffer != 0);
 	}
 
 	return result;
 }
 
-const u8 * Resources::GetFile(const char * filename)
+const uint8_t * Resources::GetFile(const char * filename)
 {
 	for(int i = 0; RecourceList[i].filename != NULL; ++i)
 	{
@@ -69,7 +69,7 @@ const u8 * Resources::GetFile(const char * filename)
 	return NULL;
 }
 
-u32 Resources::GetFileSize(const char * filename)
+uint32_t Resources::GetFileSize(const char * filename)
 {
 	for(int i = 0; RecourceList[i].filename != NULL; ++i)
 	{
@@ -97,8 +97,8 @@ GuiImageData * Resources::GetImageData(const char * filename)
 	{
 		if(strcasecmp(filename, RecourceList[i].filename) == 0)
 		{
-			const u8 * buff = RecourceList[i].CustomFile ? RecourceList[i].CustomFile : RecourceList[i].DefaultFile;
-			const u32 size = RecourceList[i].CustomFile ? RecourceList[i].CustomFileSize : RecourceList[i].DefaultFileSize;
+			const uint8_t * buff = RecourceList[i].CustomFile ? RecourceList[i].CustomFile : RecourceList[i].DefaultFile;
+			const uint32_t size = RecourceList[i].CustomFile ? RecourceList[i].CustomFileSize : RecourceList[i].DefaultFileSize;
 
 			if(buff == NULL)
                 return NULL;
@@ -150,8 +150,8 @@ GuiSound * Resources::GetSound(const char * filename)
 	{
 		if(strcasecmp(filename, RecourceList[i].filename) == 0)
 		{
-			const u8 * buff = RecourceList[i].CustomFile ? RecourceList[i].CustomFile : RecourceList[i].DefaultFile;
-			const u32 size = RecourceList[i].CustomFile ? RecourceList[i].CustomFileSize : RecourceList[i].DefaultFileSize;
+			const uint8_t * buff = RecourceList[i].CustomFile ? RecourceList[i].CustomFile : RecourceList[i].DefaultFile;
+			const uint32_t size = RecourceList[i].CustomFile ? RecourceList[i].CustomFileSize : RecourceList[i].DefaultFileSize;
 
 			if(buff == NULL)
                 return NULL;

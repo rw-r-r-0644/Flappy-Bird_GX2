@@ -29,68 +29,75 @@
 
 #include <vector>
 #include <string>
-#include "common/types.h"
+#include <wut_types.h>
 
-typedef struct
-{
-	char * FilePath;
-	bool isDir;
+typedef struct {
+    char * FilePath;
+    BOOL isDir;
 } DirEntry;
 
-class DirList
-{
+class DirList {
 public:
-	//!Constructor
-	DirList(void);
-	//!\param path Path from where to load the filelist of all files
-	//!\param filter A fileext that needs to be filtered
-	//!\param flags search/filter flags from the enum
-	DirList(const std::string & path, const char *filter = NULL, u32 flags = Files | Dirs, u32 maxDepth = 0xffffffff);
-	//!Destructor
-	virtual ~DirList();
-	//! Load all the files from a directory
-	bool LoadPath(const std::string & path, const char *filter = NULL, u32 flags = Files | Dirs, u32 maxDepth = 0xffffffff);
-	//! Get a filename of the list
-	//!\param list index
-	const char * GetFilename(int index) const;
-	//! Get the a filepath of the list
-	//!\param list index
-	const char *GetFilepath(int index) const { if (!valid(index)) return ""; else return FileInfo[index].FilePath; }
-	//! Get the a filesize of the list
-	//!\param list index
-	u64 GetFilesize(int index) const;
-	//! Is index a dir or a file
-	//!\param list index
-	bool IsDir(int index) const { if(!valid(index)) return false; return FileInfo[index].isDir; };
-	//! Get the filecount of the whole list
-	int GetFilecount() const { return FileInfo.size(); };
-	//! Sort list by filepath
-	void SortList();
-	//! Custom sort command for custom sort functions definitions
-	void SortList(bool (*SortFunc)(const DirEntry &a, const DirEntry &b));
-	//! Get the index of the specified filename
-	int GetFileIndex(const char *filename) const;
-	//! Enum for search/filter flags
-	enum
-	{
-		Files = 0x01,
-		Dirs = 0x02,
-		CheckSubfolders = 0x08,
-	};
+    //!Constructor
+    DirList(void);
+    //!\param path Path from where to load the filelist of all files
+    //!\param filter A fileext that needs to be filtered
+    //!\param flags search/filter flags from the enum
+    DirList(const std::string & path, const char *filter = NULL, uint32_t flags = Files | Dirs, uint32_t maxDepth = 0xffffffff);
+    //!Destructor
+    virtual ~DirList();
+    //! Load all the files from a directory
+    BOOL LoadPath(const std::string & path, const char *filter = NULL, uint32_t flags = Files | Dirs, uint32_t maxDepth = 0xffffffff);
+    //! Get a filename of the list
+    //!\param list index
+    const char * GetFilename(int32_t index) const;
+    //! Get the a filepath of the list
+    //!\param list index
+    const char *GetFilepath(int32_t index) const {
+        if (!valid(index)) return "";
+        else return FileInfo[index].FilePath;
+    }
+    //! Get the a filesize of the list
+    //!\param list index
+    uint64_t GetFilesize(int32_t index) const;
+    //! Is index a dir or a file
+    //!\param list index
+    BOOL IsDir(int32_t index) const {
+        if(!valid(index)) return false;
+        return FileInfo[index].isDir;
+    };
+    //! Get the filecount of the whole list
+    int32_t GetFilecount() const {
+        return FileInfo.size();
+    };
+    //! Sort list by filepath
+    void SortList();
+    //! Custom sort command for custom sort functions definitions
+    void SortList(BOOL (*SortFunc)(const DirEntry &a, const DirEntry &b));
+    //! Get the index of the specified filename
+    int32_t GetFileIndex(const char *filename) const;
+    //! Enum for search/filter flags
+    enum {
+        Files = 0x01,
+        Dirs = 0x02,
+        CheckSubfolders = 0x08,
+    };
 protected:
-	// Internal parser
-	bool InternalLoadPath(std::string &path);
-	//!Add a list entrie
-	void AddEntrie(const std::string &filepath, const char * filename, bool isDir);
-	//! Clear the list
-	void ClearList();
-	//! Check if valid pos is requested
-	inline bool valid(u32 pos) const { return (pos < FileInfo.size()); };
+    // Internal parser
+    BOOL InternalLoadPath(std::string &path);
+    //!Add a list entrie
+    void AddEntrie(const std::string &filepath, const char * filename, BOOL isDir);
+    //! Clear the list
+    void ClearList();
+    //! Check if valid pos is requested
+    inline BOOL valid(uint32_t pos) const {
+        return (pos < FileInfo.size());
+    };
 
-	u32 Flags;
-	u32 Depth;
-	const char *Filter;
-	std::vector<DirEntry> FileInfo;
+    uint32_t Flags;
+    uint32_t Depth;
+    const char *Filter;
+    std::vector<DirEntry> FileInfo;
 };
 
 #endif

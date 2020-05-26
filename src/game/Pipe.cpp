@@ -14,9 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
+#include <coreinit/time.h>
 #include "Pipe.h"
 #include "gui/GuiTrigger.h"
 #include "gui/GuiController.h"
+#include "resources/Resources.h"
 
 /**
  * Constructor for the GuiButton class.

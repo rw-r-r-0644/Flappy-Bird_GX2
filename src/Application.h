@@ -18,7 +18,7 @@
 #define _APPLICATION_H
 
 #include "menu/MainWindow.h"
-#include "video/CVideo.h"
+#include <gui/video/CVideo.h>
 #include "system/CThread.h"
 
 // forward declaration

@@ -17,10 +17,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <coreinit/memheap.h>
-#include <coreinit/baseheap.h>
-#include <coreinit/expandedheap.h>
-#include <coreinit/frameheap.h>
-#include "common/common.h"
+#include <coreinit/memfrmheap.h>
+#include <coreinit/memexpheap.h>
 #include "memory.h"
 
 #define MEMORY_ARENA_1          0
@@ -37,14 +35,14 @@
 //! Memory functions
 //! This is the only place where those are needed so lets keep them more or less private
 //!----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-static MEMExpandedHeap * mem1_heap = NULL;
-static MEMExpandedHeap * bucket_heap = NULL;
+static MEMHeapHandle mem1_heap = NULL;
+static MEMHeapHandle bucket_heap = NULL;
 
 void memoryInitialize(void)
 {
     if(!mem1_heap)
     {
-        MEMFrameHeap * mem1_heap_handle = MEMGetBaseHeapHandle(MEMORY_ARENA_1);
+        MEMHeapHandle mem1_heap_handle = MEMGetBaseHeapHandle(MEMORY_ARENA_1);
         unsigned int mem1_allocatable_size = MEMGetAllocatableSizeForFrmHeapEx(mem1_heap_handle, 4);
         void *mem1_memory = MEMAllocFromFrmHeapEx(mem1_heap_handle, mem1_allocatable_size, 4);
         if(mem1_memory)
@@ -53,7 +51,7 @@ void memoryInitialize(void)
 
     if(!bucket_heap)
     {
-        MEMFrameHeap * bucket_heap_handle = MEMGetBaseHeapHandle(MEMORY_ARENA_FG_BUCKET);
+        MEMHeapHandle bucket_heap_handle = MEMGetBaseHeapHandle(MEMORY_ARENA_FG_BUCKET);
         unsigned int bucket_allocatable_size = MEMGetAllocatableSizeForFrmHeapEx(bucket_heap_handle, 4);
         void *bucket_memory = MEMAllocFromFrmHeapEx(bucket_heap_handle, bucket_allocatable_size, 4);
         if(bucket_memory)

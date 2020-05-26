@@ -17,103 +17,117 @@
 #ifndef CTHREAD_H_
 #define CTHREAD_H_
 
+
 #include <malloc.h>
 #include <unistd.h>
+#include <coreinit/systeminfo.h>
 #include <coreinit/thread.h>
 
-class CThread
-{
+class CThread {
 public:
-	typedef void (* Callback)(CThread *thread, void *arg);
+    typedef void (* Callback)(CThread *thread, void *arg);
 
-	//! constructor
-	CThread(int iAttr, int iPriority = 16, int iStackSize = 0x8000, CThread::Callback callback = NULL, void *callbackArg = NULL)
-		: pThread(NULL)
-		, pThreadStack(NULL)
-		, pCallback(callback)
-		, pCallbackArg(callbackArg)
-	{
-	    //! save attribute assignment
-	    iAttributes = iAttr;
-		//! allocate the thread
-		pThread = (OSThread*)memalign(8, sizeof(OSThread));
-		//! allocate the stack
-		pThreadStack = (u8 *) memalign(0x20, iStackSize);
+    //! constructor
+    CThread(int32_t iAttr, int32_t iPriority = 16, int32_t iStackSize = 0x8000, CThread::Callback callback = NULL, void *callbackArg = NULL)
+        : pThread(NULL)
+        , pThreadStack(NULL)
+        , pCallback(callback)
+        , pCallbackArg(callbackArg) {
+        //! save attribute assignment
+        iAttributes = iAttr;
+        //! allocate the thread
+        pThread = (OSThread*)memalign(8, sizeof(OSThread));
+        //! allocate the stack
+        pThreadStack = (uint8_t *) memalign(0x20, iStackSize);
         //! create the thread
-		if(pThread && pThreadStack)
+        if(pThread && pThreadStack)
             OSCreateThread(pThread, &CThread::threadCallback, 1, (char*)this, pThreadStack+iStackSize, iStackSize, iPriority, iAttributes);
-	}
+    }
 
-	//! destructor
-	virtual ~CThread() { shutdownThread(); }
+    //! destructor
+    virtual ~CThread() {
+        shutdownThread();
+    }
 
-	static CThread *create(CThread::Callback callback, void *callbackArg, int iAttr = eAttributeNone, int iPriority = 16, int iStackSize = 0x8000)
-	{
-	    return ( new CThread(iAttr, iPriority, iStackSize, callback, callbackArg) );
-	}
+    static CThread *create(CThread::Callback callback, void *callbackArg, int32_t iAttr = eAttributeNone, int32_t iPriority = 16, int32_t iStackSize = 0x8000) {
+        return ( new CThread(iAttr, iPriority, iStackSize, callback, callbackArg) );
+    }
 
-	//! Get thread ID
-	virtual void* getThread() const { return pThread; }
-	//! Thread entry function
-	virtual void executeThread(void)
-	{
-	    if(pCallback)
+    //! Get thread ID
+    virtual void* getThread() const {
+        return pThread;
+    }
+    //! Thread entry function
+    virtual void executeThread(void) {
+        if(pCallback)
             pCallback(this, pCallbackArg);
-	}
-	//! Suspend thread
-	virtual void suspendThread(void) { if(isThreadSuspended()) return; if(pThread) OSSuspendThread(pThread); }
-	//! Resume thread
-	virtual void resumeThread(void) { if(!isThreadSuspended()) return; if(pThread) OSResumeThread(pThread); }
-	//! Set thread priority
-	virtual void setThreadPriority(int prio) { if(pThread) OSSetThreadPriority(pThread, prio); }
-	//! Check if thread is suspended
-	virtual bool isThreadSuspended(void) const { if(pThread) return OSIsThreadSuspended(pThread); return false; }
-	//! Check if thread is terminated
-	virtual bool isThreadTerminated(void) const { if(pThread) return OSIsThreadTerminated(pThread); return false; }
-	//! Check if thread is running
-	virtual bool isThreadRunning(void) const { return !isThreadSuspended() && !isThreadRunning(); }
-	//! Shutdown thread
-	virtual void shutdownThread(void)
-	{
-		//! wait for thread to finish
-		if(pThread && !(iAttributes & eAttributeDetach))
-		{
-		    if(isThreadSuspended())
+    }
+    //! Suspend thread
+    virtual void suspendThread(void) {
+        if(isThreadSuspended()) return;
+        if(pThread) OSSuspendThread(pThread);
+    }
+    //! Resume thread
+    virtual void resumeThread(void) {
+        if(!isThreadSuspended()) return;
+        if(pThread) OSResumeThread(pThread);
+    }
+    //! Set thread priority
+    virtual void setThreadPriority(int prio) {
+        if(pThread) OSSetThreadPriority(pThread, prio);
+    }
+    //! Check if thread is suspended
+    virtual BOOL isThreadSuspended(void) const {
+        if(pThread) return OSIsThreadSuspended(pThread);
+        return false;
+    }
+    //! Check if thread is terminated
+    virtual BOOL isThreadTerminated(void) const {
+        if(pThread) return OSIsThreadTerminated(pThread);
+        return false;
+    }
+    //! Check if thread is running
+    virtual BOOL isThreadRunning(void) const {
+        return !isThreadSuspended() && !isThreadRunning();
+    }
+    //! Shutdown thread
+    virtual void shutdownThread(void) {
+        //! wait for thread to finish
+        if(pThread && !(iAttributes & eAttributeDetach)) {
+            if(isThreadSuspended())
                 resumeThread();
 
-			OSJoinThread(pThread, NULL);
-		}
-		//! free the thread stack buffer
-		if(pThreadStack)
-			free(pThreadStack);
-		if(pThread)
-			free(pThread);
+            OSJoinThread(pThread, NULL);
+        }
+        //! free the thread stack buffer
+        if(pThreadStack)
+            free(pThreadStack);
+        if(pThread)
+            free(pThread);
 
-		pThread = NULL;
-		pThreadStack = NULL;
-	}
+        pThread = NULL;
+        pThreadStack = NULL;
+    }
     //! Thread attributes
-	enum eCThreadAttributes
-	{
-	    eAttributeNone              = 0x07,
-	    eAttributeAffCore0          = 0x01,
-	    eAttributeAffCore1          = 0x02,
-	    eAttributeAffCore2          = 0x04,
-	    eAttributeDetach            = 0x08,
-	    eAttributePinnedAff         = 0x10
-	};
+    enum eCThreadAttributes {
+        eAttributeNone              = 0x07,
+        eAttributeAffCore0          = 0x01,
+        eAttributeAffCore1          = 0x02,
+        eAttributeAffCore2          = 0x04,
+        eAttributeDetach            = 0x08,
+        eAttributePinnedAff         = 0x10
+    };
 private:
-	static int threadCallback(int argc, const char **argv)
-	{
-		//! After call to start() continue with the internal function
-		((CThread *) argv)->executeThread();
-		return 0;
-	}
+    static int threadCallback(int argc, const char **argv) {
+        //! After call to start() continue with the internal function
+        ((CThread *) argv)->executeThread();
+        return 0;
+    }
     int iAttributes;
-	OSThread *pThread;
-	u8 *pThreadStack;
-	Callback pCallback;
-	void *pCallbackArg;
+    OSThread *pThread;
+    uint8_t *pThreadStack;
+    Callback pCallback;
+    void *pCallbackArg;
 };
 
 #endif

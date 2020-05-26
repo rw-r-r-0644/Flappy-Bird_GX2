@@ -28,51 +28,55 @@
 
 #include <vector>
 #include <string>
-#include "common/types.h"
+#include <wut_types.h>
 
-const char * fmt(const char * format, ...);
-const wchar_t * wfmt(const char * format, ...);
-int strprintf(std::string &str, const char * format, ...);
-std::string strfmt(const char * format, ...);
-bool char2wchar_t(const char * src, wchar_t * dest);
-int strtokcmp(const char * string, const char * compare, const char * separator);
-int strextcmp(const char * string, const char * extension, char seperator);
+class StringTools{
+    public:
+        static BOOL EndsWith(const std::string& a, const std::string& b);
+        static const char * byte_to_binary(int32_t x);
+        static std::string removeCharFromString(std::string& input,char toBeRemoved);
+        static const char * fmt(const char * format, ...);
+        static const wchar_t * wfmt(const char * format, ...);
+        static int32_t strprintf(std::string &str, const char * format, ...);
+        static std::string strfmt(const char * format, ...);
+        static BOOL char2wchar_t(const char * src, wchar_t * dest);
+        static int32_t strtokcmp(const char * string, const char * compare, const char * separator);
+        static int32_t strextcmp(const char * string, const char * extension, char seperator);
 
-inline const char * FullpathToFilename(const char *path)
-{
-	if(!path) return path;
+        static const char * FullpathToFilename(const char *path){
+            if(!path) return path;
 
-	const char * ptr = path;
-	const char * Filename = ptr;
+            const char * ptr = path;
+            const char * Filename = ptr;
 
-	while(*ptr != '\0')
-	{
-		if(ptr[0] == '/' && ptr[1] != '\0')
-			Filename = ptr+1;
+            while(*ptr != '\0')
+            {
+                if(ptr[0] == '/' && ptr[1] != '\0')
+                    Filename = ptr+1;
 
-		++ptr;
-	}
+                ++ptr;
+            }
 
-	return Filename;
-}
+            return Filename;
+        }
 
-inline void RemoveDoubleSlashs(std::string &str)
-{
-	u32 length = str.size();
+        static void RemoveDoubleSlashs(std::string &str){
+            uint32_t length = str.size();
 
-	//! clear path of double slashes
-	for(u32 i = 1; i < length; ++i)
-	{
-		if(str[i-1] == '/' && str[i] == '/')
-		{
-			str.erase(i, 1);
-			i--;
-			length--;
-		}
-	}
-}
+            //! clear path of double slashes
+            for(uint32_t i = 1; i < length; ++i)
+            {
+                if(str[i-1] == '/' && str[i] == '/')
+                {
+                    str.erase(i, 1);
+                    i--;
+                    length--;
+                }
+            }
+        }
 
-std::vector<std::string> stringSplit(const std::string & value, const std::string & splitter);
+        static std::vector<std::string> stringSplit(const std::string & value, const std::string & splitter);
+};
 
 #endif /* __STRING_TOOLS_H */
 

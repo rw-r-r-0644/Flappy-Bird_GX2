@@ -17,6 +17,7 @@
  ****************************************************************************/
 #include "MainWindowTV.h"
 #include "utils/logger.h"
+#include "resources/Resources.h"
 
 MainWindowTV::MainWindowTV(int w, int h)
     : GuiMainWindowScreen(w, h)
